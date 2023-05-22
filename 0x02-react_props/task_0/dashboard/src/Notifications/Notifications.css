@@ -1,14 +1,22 @@
-.Notifications {
-	border: 3px dotted var(--holberton-red);
-	padding: 6px 12px;
-	position: relative;
-	margin-top: 12px;
-}
-
-li[data-priority="default"] {
-	color: blue;
-}
-
-li[data-priority="urgent"] {
-	color: var(--holberton-red);
-}
+:root {
+    --color-blue: #0000ff;
+    --color-red: #ff0000;
+  }
+  
+  .Notifications {
+    border: 2px dashed #E0434C;
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  li {
+    margin-left: 2.5rem;
+  }
+  
+  ul li[data-priority='default'] {
+    color: var(--color-blue);
+  }
+  
+  ul li[data-priority='urgent'] {
+    color: var(--color-red);
+  }
