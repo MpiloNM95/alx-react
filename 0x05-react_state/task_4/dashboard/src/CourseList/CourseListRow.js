@@ -1,8 +1,13 @@
-import React, { Fragment }from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, css } from 'aphrodite';
+function rowState() {
+	const [checkBoxState, setCheckBox] = useState(false);
+	const updateCheckBox = () => {
+		setCheckBox(!checkBoxState);
+	}
+	return { checkBoxState, updateCheckBox };
+}
 
 function CourseListRow({ isHeader, textFirstCell, textSecondCell }) {
+	const { checkBoxState, updateCheckBox } = rowState();
 	const styleRow = { backgroundColor: '#f5f5f5ab' };
 	const styleHeaderRow = { backgroundColor: '#deb5b545' };
 
@@ -21,7 +26,10 @@ function CourseListRow({ isHeader, textFirstCell, textSecondCell }) {
 	} else {
 		myElement = (
 			<Fragment>
-				<td>{textFirstCell}</td>
+				<td>
+					<input type='checkbox' onClick={updateCheckBox}/>
+					{textFirstCell}
+				</td>
 				<td>{textSecondCell}</td>
 			</Fragment>
 		);
@@ -35,7 +43,7 @@ function CourseListRow({ isHeader, textFirstCell, textSecondCell }) {
 		stylesBackground = styleRow;
 	}
 	return (
-		<tr style={stylesBackground}>{myElement}</tr>
+		<tr style={stylesBackground} className={css(checkBoxState ? styles.rowChecked : '')}>{myElement}</tr>
 	);
 }
 
@@ -50,6 +58,10 @@ const styles = StyleSheet.create({
 		borderbottom: '1px solid lightgray',
 		height: '25px',
 		textAlign: 'left'
+	},
+
+	rowChecked: {
+		backgroundColor: '#e6e4e4'
 	}
 });
 
