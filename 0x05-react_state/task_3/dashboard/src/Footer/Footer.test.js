@@ -1,24 +1,41 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { expect } from 'chai';
-import App from '../App/App';
-import Footer from './Footer'
+import { shallow, mount } from 'enzyme';
+import Footer from './Footer';
+import { user, logOut } from '../App/AppContext';
+import AppContext from '../App/AppContext';
 
-describe('Test Footer.js', () => {
-  it('Footer without crashing', (done) => {
-    expect(shallow(<Footer />).exists());
-    done();
-  });
+describe('Basic React Tests - <Footer />', function() {
+	it('Should render without crashing', () => {
+		const wrapper = shallow(<Footer />);
+		expect(wrapper.exists()).toBeTruthy();
+	});
 
-  it('div with the class App-footer', (done) => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.contains(<footer className='App-footer' />))
-    done();
-  });
+	it('Should render footer component and the text Copyright', () => {
+		const wrapper = mount(<Footer />);
+		expect(wrapper.find('.Footer')).toHaveLength(1);
+		expect(wrapper.find('.Footer p').text()).toContain('Copyright');
+	});
 
-  it('renders Copyright text', (done) => {
-    const wrapper = shallow(<Footer />);
-    expect(wrapper.text('Copyright')).contain('Copyright');
-    done();
-  });
+	it('Should check that the link is not displayed when the user is logged out within the contex', () => {
+		const wrapper = mount(
+			<AppContext.Provider value={{ user, logOut }}>
+				<Footer />
+			</AppContext.Provider>
+		);
+		expect(wrapper.find('a').exists()).not.toBeTruthy();
+	});
+
+	it('Should check that the link is displayed when the user is logged in within the context', () => {
+		const newUser = {
+			email: 'minipachru@gmail.com',
+			password: '012345',
+			isLoggedIn: true
+		};
+		const wrapper = mount(
+			<AppContext.Provider value={{ user: newUser, logOut }}>
+				<Footer />
+			</AppContext.Provider>
+		);
+		expect(wrapper.find('a').exists()).toBeTruthy();
+	});
 });

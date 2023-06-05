@@ -18,7 +18,7 @@ const listCourses = [
   {id: 3, name: 'React', credit: 40}
 ];
 
-const listNotifications = [
+const newlistNotifications = [
   {id: 1, type: 'default', value: 'New course available'},
   {id: 2, type: 'urgent', value: 'New resume available'},
   {id: 3, type: 'urgent', html: { __html: getLatestNotification() }}
@@ -32,10 +32,12 @@ class App extends React.Component {
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
     this.state = {
       displayDrawer: false,
       user: user,
-      logOut: this.logOut
+      logOut: this.logOut,
+      listNotifications: newlistNotifications
     };
   }
 
@@ -68,6 +70,12 @@ class App extends React.Component {
     this.setState({ user: user });
   }
 
+  markNotificationAsRead(id){
+    this.setState({
+      listNotifications: this.state.listNotifications.filter(notification => notification.id !== id)
+    });
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.keyboardKeys);
   }
@@ -77,7 +85,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { displayDrawer, user, logOut } = this.state;
+    const { displayDrawer, user, logOut, listNotifications } = this.state;
     const value = { user, logOut };
 
     return (
@@ -87,6 +95,7 @@ class App extends React.Component {
           displayDrawer={displayDrawer}
           handleDisplayDrawer={this.handleDisplayDrawer}
           handleHideDrawer={this.handleHideDrawer}
+          markNotificationAsRead={this.markNotificationAsRead}
         />
         <div className={css(styles.App)}>
           <Header />
@@ -149,18 +158,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderTop: '4px solid #e1354b'
+    borderTop: '4px solid #e1354b',
+    textAlign: 'center'
   },
 });
-
-// App.propTypes = {
-//   isLoggedIn: PropTypes.bool,
-//   logOut: PropTypes.func
-// };
-
-// App.defaultProps = {
-//   isLoggedIn: false,
-//   logOut: () => {}
-// };
 
 export default App;

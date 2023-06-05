@@ -1,15 +1,23 @@
-import React, { Fragment } from 'react';
+import  React from 'react';
 import { getFullYear, getFooterCopy } from '../utils/utils';
-import './Footer.css';
-
+import AppContext from "../App/AppContext";
 
 function Footer() {
-  return(
-    <Fragment>
-      <div className="App-footer">
-        <p>Copyright {getFullYear()} - {getFooterCopy(true)}</p>
-      </div>
-    </Fragment>
+  return (
+    <AppContext.Consumer>
+      {
+        (context) => {
+          return (
+            <footer className="Footer">
+              <p>
+                <i>Copyright {getFullYear()} - {getFooterCopy()}</i>
+              </p>
+              {context.user.isLoggedIn && <a href='#'>Contact us</a>}
+            </footer>
+          );
+        }
+      }
+    </AppContext.Consumer>
   );
 }
 

@@ -64,56 +64,6 @@ describe('Basic React Tests - <Notifications list />', function() {
 		expect(wrapper.find('NotificationItem').html()).not.toEqual('<li data-notification-type="default">Here is the list of notifications</li>');
 	});
 
-	it('When calling the function markAsRead on an instance of the component - Should check that the spy is being called with the right message', () => {
-		const wrapper = shallow(<Notifications displayDrawer />);
-
-		console.log = jest.fn();
-		const newNote = wrapper.instance();
-		const id = 2;
-		newNote.markAsRead(id);
-		expect(console.log).toHaveBeenCalledWith(`Notification ${id} has been marked as read`);
-		jest.restoreAllMocks();
-  });
-
-	it("When updating the props of the component with the same list - Should check that the component doesn’t rerender", () => {
-		const listNotifications = [
-			{ id: 1, type: "default", value: "New course available" },
-			{ id: 2, type: "urgent", value: "New resume available" },
-		];
-
-		const wrapper = shallow(<Notifications displayDrawer listNotifications={listNotifications} />);
-		const shouldComponentUpdate = jest.spyOn(Notifications.prototype,"shouldComponentUpdate");
-
-		wrapper.setProps({ listNotifications: listNotifications });
-		expect(shouldComponentUpdate).toHaveBeenCalled();
-		expect(shouldComponentUpdate).toHaveLastReturnedWith(false);
-
-		jest.restoreAllMocks();
-	});
-
-	it("When updating the props of the component with a longer list - Should check that the component does rerender", () => {
-		let listNotifications = [
-			{ id: 1, type: "default", value: "New course available" },
-			{ id: 2, type: "urgent", value: "New resume available" }
-		];
-
-		const newlistNotifications = [
-			{ id: 1, type: "default", value: "New course available" },
-			{ id: 2, type: "urgent", value: "New resume available" },
-			{id: 3, type: 'urgent', html: { __html: getLatestNotification() }}
-		];
-
-		console.log(listNotifications);
-		const wrapper = shallow(<Notifications displayDrawer listNotifications={listNotifications} />);
-		const shouldComponentUpdate = jest.spyOn(Notifications.prototype,"shouldComponentUpdate");
-
-		wrapper.setProps({ listNotifications: newlistNotifications });
-		expect(shouldComponentUpdate).toHaveBeenCalled();
-		expect(shouldComponentUpdate).toHaveLastReturnedWith(true);
-
-		jest.restoreAllMocks();
-	});
-
 	it('Should check that clicking on the menu item calls handleDisplayDrawer', () => {
 		const handleDisplayDrawer = jest.fn();
 		const handleHideDrawer = jest.fn();
