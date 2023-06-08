@@ -1,10 +1,12 @@
-import getImmutableObject from './0-fromjs.js';
+import getImmutableObject from './0-fromjs';
 
-const object = {
-    fear: true,
-    smell: -1033575916.9145899,
-    wall: false,
-    thing: -914767132
+// Example usage
+const inputObject = {
+  fear: true,
+  smell: -1033575916.9145899,
+  wall: false,
+  thing: -914767132,
 };
 
-console.log(getImmutableObject(object));
+const immutableMap = getImmutableObject(inputObject);
+console.log(immutableMap);
