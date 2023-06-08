@@ -1,13 +1,11 @@
-import accessImmutableObject from './2-nested.js';
+import accessImmutableObject from './accessImmutableObject';
 
-const result = accessImmmutableObject(
-    {
-        name: {
-            first: "Guillaume",
-            last: "Salva",
-        },
-    },
-    ['name', 'first']
-);
+const object = {
+  name: {
+    first: 'Guillaume',
+    last: 'Salva',
+  },
+};
 
+const result = accessImmutableObject(object, ['name', 'first']);
 console.log(result);
