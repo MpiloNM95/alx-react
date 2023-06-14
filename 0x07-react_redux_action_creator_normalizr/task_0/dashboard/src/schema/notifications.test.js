@@ -1,4 +1,4 @@
-import { getAllNotificationsByUser } from ".//notifications";
+import { getAllNotificationsByUser } from "./notifications";
 
 describe("notification_tests", function () {
   describe("read data from json", function () {
