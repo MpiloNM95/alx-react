@@ -1,4 +1,4 @@
-import * as notificationsData from "../../../../notifications.json";
+import * as notificationsData from "../../notifications.json";
 import { normalize, schema } from "normalizr";
 
 const user = new schema.Entity("users");
@@ -34,3 +34,11 @@ export function getAllNotificationsByUser(userId) {
 
   return notificationsByUser;
 }
+
+const notificationsNormalizer = (data) => {
+  const normalizedData = normalize(data, [notification]);
+
+  return normalizedData.entities;
+};
+
+export default notificationsNormalizer;
