@@ -1,41 +1,31 @@
-import React from 'react';
-import { shallow, mount } from 'enzyme';
-import Footer from './Footer';
-import { user, logOut } from '../App/AppContext';
-import AppContext from '../App/AppContext';
+import { shallow, mount } from "enzyme";
+import React from "react";
+import { Footer } from "./Footer";
+import AppContext from "../App/AppContext";
+import { user, logOut } from "../App/AppContext";
+import { shallowEqual } from "react-redux";
 
-describe('Basic React Tests - <Footer />', function() {
-	it('Should render without crashing', () => {
-		const wrapper = shallow(<Footer />);
-		expect(wrapper.exists()).toBeTruthy();
-	});
+describe("<Footer />", () => {
+  it("Footer renders without crashing", () => {
+    const wrapper = shallow(<Footer />);
+    expect(wrapper.exists()).toEqual(true);
+  });
+  it("Verify that the components at the very least render the text “Copyright”", () => {
+    const wrapper = shallow(<Footer />);
+    expect(wrapper.find("div.footer p")).toHaveLength(1);
+    expect(wrapper.find("div.footer p").text()).toContain("Copyright");
+  });
 
-	it('Should render footer component and the text Copyright', () => {
-		const wrapper = mount(<Footer />);
-		expect(wrapper.find('.Footer')).toHaveLength(1);
-		expect(wrapper.find('.Footer p').text()).toContain('Copyright');
-	});
+  it("verify that the link is not displayed when the user is logged out within the context", () => {
+    const wrapper = shallow(<Footer user={null} />);
+    expect(wrapper.find("div.footer a")).toHaveLength(0);
+  });
 
-	it('Should check that the link is not displayed when the user is logged out within the contex', () => {
-		const wrapper = mount(
-			<AppContext.Provider value={{ user, logOut }}>
-				<Footer />
-			</AppContext.Provider>
-		);
-		expect(wrapper.find('a').exists()).not.toBeTruthy();
-	});
-
-	it('Should check that the link is displayed when the user is logged in within the context', () => {
-		const newUser = {
-			email: 'minipachru@gmail.com',
-			password: '012345',
-			isLoggedIn: true
-		};
-		const wrapper = mount(
-			<AppContext.Provider value={{ user: newUser, logOut }}>
-				<Footer />
-			</AppContext.Provider>
-		);
-		expect(wrapper.find('a').exists()).toBeTruthy();
-	});
+  it("verify that the link is displayed when the user is logged in within the context", () => {
+    const wrapper = shallow(
+      <Footer user={{ email: "larry@hd.com", password: "123456" }} />
+    );
+    expect(wrapper.find("div.footer a")).toHaveLength(1);
+    expect(wrapper.find("div.footer a").text()).toEqual("Contact us");
+  });
 });
