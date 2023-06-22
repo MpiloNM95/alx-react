@@ -1,33 +1,36 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, css } from 'aphrodite';
-import Header from '../Header/Header';
-import Login from '../Login/Login';
-import BodySection from '../BodySection/BodySection';
-import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
-import Footer from '../Footer/Footer';
-import CourseList from '../CourseList/CourseList';
-import Notifications from '../Notifications/Notifications';
-import { getLatestNotification } from '../utils/utils';
-import { user, logOut } from './AppContext.js';
-import AppContext from './AppContext';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import Notifications from "../Notifications/Notifications";
+import Header from "../Header/Header";
+import BodySection from "../BodySection/BodySection";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import Login from "../Login/Login";
+import CourseList from "../CourseList/CourseList";
+import Footer from "../Footer/Footer";
+import PropTypes from "prop-types";
+import { getLatestNotification } from "../utils/utils";
+import { StyleSheet, css } from "aphrodite";
+import { user, logOut } from "./AppContext";
+import AppContext from "./AppContext";
 
 const listCourses = [
-  {id: 1, name: 'ES6', credit: 60},
-  {id: 2, name: 'Webpack', credit: 20},
-  {id: 3, name: 'React', credit: 40}
+  { id: 1, name: "ES6", credit: 60 },
+  { id: 2, name: "Webpack", credit: 20 },
+  { id: 3, name: "React", credit: 40 },
 ];
 
-const newlistNotifications = [
-  {id: 1, type: 'default', value: 'New course available'},
-  {id: 2, type: 'urgent', value: 'New resume available'},
-  {id: 3, type: 'urgent', html: { __html: getLatestNotification() }}
+export const listNotificationsInitialState = [
+  { id: 1, type: "default", value: "New course available" },
+  { id: 2, type: "urgent", value: "New resume available" },
+  { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
 ];
 
-class App extends React.Component {
+document.body.style.margin = 0;
+
+class App extends Component {
   constructor(props) {
     super(props);
-    this.keyboardKeys = this.keyboardKeys.bind(this);
+    this.handleKeyCombination = this.handleKeyCombination.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
     this.logIn = this.logIn.bind(this);
@@ -35,16 +38,16 @@ class App extends React.Component {
     this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
     this.state = {
       displayDrawer: false,
-      user: user,
+      user,
       logOut: this.logOut,
-      listNotifications: newlistNotifications
+      listNotifications: listNotificationsInitialState,
     };
   }
 
-  keyboardKeys(x) {
-    if (x.key === 'h' && x.ctrlKey) {
-      alert('Logging you out');
-      this.props.logOut();
+  handleKeyCombination(e) {
+    if (e.key === "h" && e.ctrlKey) {
+      alert("Logging you out");
+      this.state.logOut();
     }
   }
 
@@ -59,33 +62,38 @@ class App extends React.Component {
   logIn(email, password) {
     this.setState({
       user: {
-        email: email,
-        password: password,
-        isLoggedIn: true
+        email,
+        password,
+        isLoggedIn: true,
       },
     });
   }
 
   logOut() {
-    this.setState({ user: user });
+    this.setState({ user });
   }
 
-  markNotificationAsRead(id){
+  markNotificationAsRead(id) {
     this.setState({
-      listNotifications: this.state.listNotifications.filter(notification => notification.id !== id)
+      listNotifications: this.state.listNotifications.filter((notification) => {
+        return notification.id !== id;
+      }),
     });
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.keyboardKeys);
+    document.addEventListener("keydown", this.handleKeyCombination);
   }
 
   componentWillUnmount() {
-    document.addEventListener('keydown', this.keyboardKeys);
+    document.removeEventListener("keydown", this.handleKeyCombination);
   }
 
   render() {
-    const { displayDrawer, user, logOut, listNotifications } = this.state;
+    const { user, logOut, displayDrawer, listNotifications } = this.state;
+
+    const { isLoggedIn } = this.props;
+
     const value = { user, logOut };
 
     return (
@@ -97,70 +105,95 @@ class App extends React.Component {
           handleHideDrawer={this.handleHideDrawer}
           markNotificationAsRead={this.markNotificationAsRead}
         />
-        <div className={css(styles.App)}>
-          <Header />
-        </div>
-        <div className={css(styles.AppBody)}>
-          {
-            user.isLoggedIn ? (
-              <BodySectionWithMarginBottom title="Course list">
-                <CourseList listCourses={listCourses}/>
+        <div className={css(styles.container)}>
+          <div className={css(styles.app)}>
+            <Header />
+          </div>
+          <div className={css(styles.appBody)}>
+            {!isLoggedIn ? (
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <Login logIn={this.logIn} />
               </BodySectionWithMarginBottom>
             ) : (
-              <BodySectionWithMarginBottom title="Log in to continue">
-                <Login logIn ={this.logIn} />
+              <BodySectionWithMarginBottom title="Course list">
+                <CourseList listCourses={listCourses} />
               </BodySectionWithMarginBottom>
-            )
-          }
-        </div>
-        <BodySection title="News from the School">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna
-            aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis
-            aute irure dolor in reprehenderit in
-            voluptate velit esse cillum dolore eu fugiat
-            nulla pariatur. Excepteur sint occaecat
-            cupidatat non proident, sunt in culpa qui
-            officia deserunt mollit anim id est laborum.
-          </p>
-        </BodySection>
-        <div className={css(styles.AppFooter)}>
-          <Footer />
+            )}
+          </div>
+          <BodySection title="News from the School">
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book. It has
+              survived not only five centuries, but also the leap into
+              electronic typesetting, remaining essentially unchanged. It was
+              popularised in the 1960s with the release of Letraset sheets
+              containing Lorem Ipsum passages, and more recently with desktop
+              publishing software like Aldus PageMaker including versions of
+              Lorem Ipsum.
+            </p>
+          </BodySection>
+
+          <div className={css(styles.footer)}>
+            <Footer />
+          </div>
         </div>
       </AppContext.Provider>
     );
   }
 }
 
+App.defaultProps = {};
+
+App.propTypes = {};
+
+const cssVars = {
+  mainColor: "#e01d3f",
+};
+
+const screenSize = {
+  small: "@media screen and (max-width: 900px)",
+};
+
 const styles = StyleSheet.create({
-  App: {
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    margin: 0,
-    padding: 0
+  container: {
+    width: "calc(100% - 16px)",
+    marginLeft: "8px",
+    marginRight: "8px",
   },
 
-  AppBody: {
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    height: '60vh',
-    margin: 0,
-    padding: 0
+  app: {
+    borderBottom: `3px solid ${cssVars.mainColor}`,
   },
 
-  AppFooter: {
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    margin: 0,
-    padding: 0,
-    height: '6vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTop: '4px solid #e1354b',
-    textAlign: 'center'
+  appBody: {
+    display: "flex",
+    justifyContent: "center",
+  },
+
+  footer: {
+    borderTop: `3px solid ${cssVars.mainColor}`,
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    position: "fixed",
+    paddingBottom: "10px",
+    bottom: 0,
+    fontStyle: "italic",
+    [screenSize.small]: {
+      position: "static",
+    },
   },
 });
 
-export default App;
+export const mapStateToProps = (state) => {
+  return {
+    isLoggedIn: state.get("isUserLoggedIn"),
+  };
+};
+
+// export default App;
+
+export default connect(mapStateToProps)(App);
